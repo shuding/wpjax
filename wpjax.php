@@ -3,13 +3,11 @@
 Plugin Name: wpjax
 Plugin URI: http://quietgalaxy.me/tech
 Description: A WordPress jQuery.Pjax plugin.
-Version: 0.1
+Version: 0.3
 Author: Ding Shu
 Author URI: http://quietgalaxy.me
 License: GPL2
 */
-?>
-<?php
 /*
 Copyright 2013  Ding Shu  (email : ds303077135@gmail.com)
 
@@ -27,8 +25,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-?>
-<?php
 	if (!class_exists("wpjquerypjax")) {
 		class wpjquerypjax {
 			function wpjquerypjax() {
@@ -37,11 +33,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					"container" => "#content",
 					"cache" => "true",
 					"storage" => "true",
-					"timeout" => 20000
+					"timeout" => 20000,
+					"pjax_start" => "$('#content').animate({opacity:'0'},500);",
+					"pjax_end" => "$('#content').animate({opacity:'1'},500);"
 				);
 				add_option("pjax_options", $default_options, '', 'yes');
 			}
 			function add_header_code() {
+			?>
+				<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+			<?php
 				wp_enqueue_script('script_slug',  plugins_url("jquery.pjax.js",__FILE__));
 			}
 			function add_footer_code() {	
@@ -59,6 +60,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 								storage: ".$options["storage"].",
 								timeout:  ".$options["timeout"]."
 							});
+						});
+						$('".$options["container"]."').on('pjax:start', function(){
+							".$options["pjax_start"]."
+						});
+						$('".$options["container"]."').on('pjax:end', function(){
+							".$options["pjax_end"]."
 						});
 					</script>
 				\n");
@@ -80,6 +87,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					$options["storage"] = htmlentities($_POST['sto']);
 				if (isset($_POST['tim']))
 					$options["timeout"] = htmlentities($_POST['tim']);
+				if (isset($_POST['sta']))
+					$options["pjax_start"] = stripslashes($_POST['sta']);
+				if (isset($_POST['end']))
+					$options["pjax_end"] = stripslashes($_POST['end']);
 				
 				if (isset($_POST['def']))
 					$options = array(
@@ -87,7 +98,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						"container" => "#content",
 						"cache" => "true",
 						"storage" => "true",
-						"timeout" => 20000
+						"timeout" => 20000,
+						"pjax_start" => "$('#content').animate({opacity:'0'},500);",
+						"pjax_end" => "$('#content').animate({opacity:'1'},500);"
 					);
 				update_option("pjax_options", $options);
 				
@@ -96,8 +109,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				<div style="display:block;float:right;margin:10px 50px 0 0;border:1px solid #bdbdbd; padding:20px">
 					<p>jQuery.Pjax on github: <a href="https://github.com/defunkt/jquery-pjax">defunkt/jquery-pjax</a></p>
 					<p>Plugin author: <a href="http://quietgalaxy.me">Ding Shu</a></p>
+					<p>Source in github: <a href="http://github.com/quietshu/wpjax">wpjax</a></p>
 					<p>Readme: <a href="#">readme.txt</a></p>
-					<p>Version: 0.1</p>
+					<p>Version: 0.3</p>
 					<form action="" method="post">
 						<input type="submit" id="res" name="def" value="default settings"/>
 					</form>
@@ -119,11 +133,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					    box-shadow: 
 					}
 					input:hover {
-						cursor: default;
 						opacity: 0.9;
-					}
-					input[type=submit]{
-						cursor: pointer;
 					}
 					#res{
 						border: none;
@@ -145,21 +155,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 						color: rgb(255, 255, 255);
 						margin: 0 0 10px 10px;
 						width: 140px;
-						display: inline-block;
+						display: block;
 					}
 				</style>
 				<form action="" method="post">
-					<h2>selector</h2>
-						<input type="text" name="sel" value="<?php _e($options["selector"]) ?>"/>
-					<h2>container</h2>
-						<input type="text" name="con" value="<?php _e($options["container"]) ?>"/>
-					<h2>cache</h2>
-						<input type="text" name="cac" value="<?php _e($options["cache"]) ?>"/>
-					<h2>storage</h2>
-						<input type="text" name="sto" value="<?php _e($options["storage"]) ?>"/>
-					<h2>timeout(ms)</h2>
-						<input type="text" name="tim" value="<?php _e($options["timeout"]) ?>"/>
-					<br/>
+					<div style="display:inline-block;border-right: 1px dotted #B9B9B9;padding-right: 30px;">
+						<h2>selector</h2>
+							<input type="text" name="sel" value="<?php _e($options["selector"]) ?>"/>
+						<h2>container</h2>
+							<input type="text" name="con" value="<?php _e($options["container"]) ?>"/>
+						<h2>cache</h2>
+							<input type="text" name="cac" value="<?php _e($options["cache"]) ?>"/>
+						<h2>storage</h2>
+							<input type="text" name="sto" value="<?php _e($options["storage"]) ?>"/>
+						<h2>timeout(ms)</h2>
+							<input type="text" name="tim" value="<?php _e($options["timeout"]) ?>"/>
+						<br/>
+					</div>
+					<div style="display:inline-block;vertical-align: top;margin-left: 30px;">
+						<h2>pjax:start(javascript code)</h2>
+							<textarea rows="9" cols="30" type="text" name="sta"><?php _e($options["pjax_start"]) ?></textarea>
+						<h2>pjax:end(javascript code)</h2>
+							<textarea rows="9" cols="30" type="text" name="end"><?php _e($options["pjax_end"]) ?></textarea>
+					</div>
 					<input type="submit" id="sub" value="update settings"/>
 				</form>
 				</div>
@@ -171,8 +189,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		$wpjax = new wpjquerypjax();
 	}
 	if (isset($wpjax)) {
-		add_action('admin_menu', 			array(&$wpjax,'wpjax_menu'));
-		add_action('wp_head', 	array(&$wpjax,'add_header_code'));
-		add_action('wp_footer', 				array(&$wpjax,'add_footer_code'));
+		add_action('admin_menu', 	array(&$wpjax,'wpjax_menu'));
+		add_action('wp_head', 		array(&$wpjax,'add_header_code'));
+		add_action('wp_footer', 		array(&$wpjax,'add_footer_code'));
 	}
 ?>
