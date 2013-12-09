@@ -4,11 +4,11 @@ I wrote wpjax about one week ago, it's a simple pjax plugin for WordPress.
 
 ## Plugin Information & License
 	Plugin Name: wpjax
-	Plugin URI: http://quietgalaxy.me/tech
+	Plugin URL: https://github.com/quietshu/wpjax
 	Description: A WordPress jQuery.Pjax plugin.
 	Version: 0.3
 	Author: Shu Ding
-	Author URI: http://quietgalaxy.me/world
+	Author URL: http://quietgalaxy.me/world
 	License: GPL2
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	
