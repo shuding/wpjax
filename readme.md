@@ -9,8 +9,8 @@ I wrote wpjax about one week ago, it's a simple pjax plugin for WordPress.
 	Version: 0.3
 	Author: Shu Ding
 	Author URL: http://quietgalaxy.me/world
-	License: GPL2
-	License URI: http://www.gnu.org/licenses/gpl-2.0.html
+	License: GPL3
+	License URI: http://www.gnu.org/licenses/gpl-3.0.html
 	
 ## What's pjax?
 >pjax is a jQuery plugin that uses ajax and pushState to deliver a fast browsing experience with real permalinks, page titles, and a working back button.
